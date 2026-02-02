@@ -1,30 +1,19 @@
-import { eventos, Evento } from "../models/eventos.model";
+import { Evento, CrearEventoDTO, ActualizarEventoDTO } from "../models/eventos.model";
 
-export const listEventos = (): Evento[] => {
+
+const eventos: Evento[] = [];
+
+
+export const getAllEventos = (): Evento[] => {
   return eventos;
 };
 
-
-export const createEvento = (data: {
-  fecha: string;
-  hora: string;
-  descripcion: string;
-  veterinario: string;
-}): Evento | { error: string } => {
-  const { fecha, hora, descripcion, veterinario } = data;
-
-  if (!fecha || !hora || !descripcion || !veterinario) {
-    return { error: "Faltan datos: fecha, hora, descripcion y veterinario son obligatorios" };
-  }
-
-  const newEvento: Evento = {
-    id: Date.now(),
-    fecha: fecha.trim(),
-    hora: hora.trim(),
-    descripcion: descripcion.trim(),
-    veterinario: veterinario.trim(),
+ export const createEvento = (data: CrearEventoDTO): Evento => {
+  const nuevo: Evento = {
+    id: eventos.length + 1,
+    ...data,
   };
 
-  eventos.push(newEvento);
-  return newEvento;
+  eventos.push(nuevo);
+  return nuevo;
 };
