@@ -1,13 +1,12 @@
 import { Router } from "express";
+import { authenticate } from "../middlewares/auth.middleware";
 import { getEventos, postEvento } from "../controllers/eventos.controller";
 
 const router = Router();
 
-// GET /eventos → traer todos los eventos
-router.get("/", getEventos);
+router.get("/", authenticate, getEventos);
 
-// POST /eventos → crear un evento
-router.post("/", postEvento);
+router.post("/", authenticate, postEvento);
 
 export default router;
 

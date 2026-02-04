@@ -1,19 +1,19 @@
-import { Evento, CrearEventoDTO, ActualizarEventoDTO } from "../models/eventos.model";
+// src/services/eventos.service.ts
 
+import { Evento } from "../models/eventos.model";
 
 const eventos: Evento[] = [];
 
-
-export const getAllEventos = (): Evento[] => {
-  return eventos;
+export const getAllEventos = (userId: string): Evento[] => {
+  return eventos.filter((e) => e.userId === userId);
 };
 
- export const createEvento = (data: CrearEventoDTO): Evento => {
-  const nuevo: Evento = {
-    id: eventos.length + 1,
+export const createEvento = (data: Omit<Evento, "id">): Evento => {
+  const nuevoEvento: Evento = {
+    id: Date.now(),
     ...data,
   };
 
-  eventos.push(nuevo);
-  return nuevo;
+  eventos.push(nuevoEvento);
+  return nuevoEvento;
 };

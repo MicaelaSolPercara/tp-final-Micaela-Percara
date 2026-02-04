@@ -5,6 +5,7 @@ export interface Evento {
   hora: string;
   descripcion: string;
   veterinario: string;
+  userId: string;
 }
 
 export interface CrearEventoDTO {
