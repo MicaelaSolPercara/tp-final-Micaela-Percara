@@ -1,49 +1,68 @@
 import { Request, Response } from "express";
-import { getAllEventos, createEvento } from "../services/eventos.service";
-import { actualizarEvento, eliminarEvento } from "../services/eventos.service";
-import { ActualizarEventoDTO } from "../models/eventos.model";
+import {
+  getAllEventos,
+  createEvento,
+  actualizarEvento,
+  eliminarEvento,
+} from "../services/eventos.service";
+import { CrearEventoDTO, ActualizarEventoDTO } from "../models/eventos.model";
 
-
-export const getEventos = (req: Request, res: Response) => {
- const userId = (req as any).user.id; 
-
-  const eventos = getAllEventos(userId);
-  res.json(eventos);
+// convierte "string | string[]" -> "string" seguro
+const toStr = (value: any): string => {
+  if (Array.isArray(value)) return String(value[0]);
+  return String(value);
 };
 
+export const getEventos = async (req: Request, res: Response) => {
+  try {
+    const userId: string = toStr((req as any).user?.id);
 
-export const postEvento = (req: Request, res: Response) => {
- const userId = (req as any).user.id;
-
-  const nuevoEvento = createEvento({ ...req.body, userId });
-
-  res.status(201).json(nuevoEvento);
+    const eventos = await getAllEventos(userId);
+    return res.json(eventos);
+  } catch {
+    return res.status(401).json({ message: "No autorizado" });
+  }
 };
 
-export const patchEvento = (req: Request, res: Response) => {
-  const id: number = Number(req.params.id);          // 👈 fuerza number
-  if (Number.isNaN(id)) return res.status(400).json({ message: "ID inválido" });
+export const postEvento = async (req: Request, res: Response) => {
+  try {
+    const userId: string = toStr((req as any).user?.id);
+    const data: CrearEventoDTO = req.body;
 
-  const userId: string = String(req.user!.id);       // 👈 fuerza string
-
-  const datos: ActualizarEventoDTO = req.body;       // 👈 fuerza DTO
-
-  const evento = actualizarEvento(id, userId, datos);
-
-  if (!evento) return res.status(404).json({ message: "Evento no encontrado" });
-
-  return res.json(evento);
+    const nuevo = await createEvento(userId, data);
+    return res.status(201).json(nuevo);
+  } catch {
+    return res.status(401).json({ message: "No autorizado" });
+  }
 };
 
-export const deleteEvento = (req: Request, res: Response) => {
-  const id: number = Number(req.params.id);
-  if (Number.isNaN(id)) return res.status(400).json({ message: "ID inválido" });
+export const patchEvento = async (req: Request, res: Response) => {
+  try {
+    const id: string = toStr((req as any).params?.id);
+    const userId: string = toStr((req as any).user?.id);
+    const datos: ActualizarEventoDTO = req.body;
 
-  const userId: string = String(req.user!.id);
+    const evento = await actualizarEvento(id, userId, datos);
 
-  const eliminado = eliminarEvento(id, userId);
+    if (!evento) return res.status(404).json({ message: "Evento no encontrado" });
 
-  if (!eliminado) return res.status(404).json({ message: "Evento no encontrado" });
+    return res.json(evento);
+  } catch {
+    return res.status(401).json({ message: "No autorizado" });
+  }
+};
 
-  return res.json({ message: "Evento eliminado correctamente" });
+export const deleteEvento = async (req: Request, res: Response) => {
+  try {
+    const id: string = toStr((req as any).params?.id);
+    const userId: string = toStr((req as any).user?.id);
+
+    const eliminado = await eliminarEvento(id, userId);
+
+    if (!eliminado) return res.status(404).json({ message: "Evento no encontrado" });
+
+    return res.json({ message: "Evento eliminado correctamente" });
+  } catch {
+    return res.status(401).json({ message: "No autorizado" });
+  }
 };

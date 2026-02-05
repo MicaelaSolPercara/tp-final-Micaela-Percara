@@ -1,41 +1,31 @@
-import { Evento, ActualizarEventoDTO } from "../models/eventos.model";
+import { EventoMongo } from "../models/evento.mongo.model";
+import { CrearEventoDTO, ActualizarEventoDTO } from "../models/eventos.model";
 
-const eventos: Evento[] = [];
-
-export const getAllEventos = (userId: string): Evento[] => {
-  return eventos.filter((e) => e.userId === userId);
+// GET /api/eventos
+export const getAllEventos = async (userId: string) => {
+  return EventoMongo.find({ userId }).sort({ createdAt: -1 });
 };
 
-export const createEvento = (data: Omit<Evento, "id">): Evento => {
-  const nuevoEvento: Evento = {
-    id: Date.now(),
-    ...data,
-  };
-
-  eventos.push(nuevoEvento);
-  return nuevoEvento;
+// POST /api/eventos
+export const createEvento = async (userId: string, data: CrearEventoDTO) => {
+  return EventoMongo.create({ ...data, userId });
 };
 
-export const actualizarEvento = (
-  id: number,
+// PATCH /api/eventos/:id  ✅ id ES STRING
+export const actualizarEvento = async (
+  id: string,
   userId: string,
   datos: ActualizarEventoDTO
-): Evento | null => {
-  const evento = eventos.find((e) => e.id === id && e.userId === userId);
-
-  if (!evento) return null;
-
-  // Actualiza SOLO lo que venga en "datos"
-  Object.assign(evento, datos);
-
-  return evento;
+) => {
+  return EventoMongo.findOneAndUpdate(
+    { _id: id, userId },
+    { $set: datos },
+    { new: true }
+  );
 };
 
-export const eliminarEvento = (id: number, userId: string): boolean => {
-  const index = eventos.findIndex((e) => e.id === id && e.userId === userId);
-
-  if (index === -1) return false;
-
-  eventos.splice(index, 1);
-  return true;
+// DELETE /api/eventos/:id ✅ id ES STRING
+export const eliminarEvento = async (id: string, userId: string) => {
+  const res = await EventoMongo.deleteOne({ _id: id, userId });
+  return res.deletedCount === 1;
 };

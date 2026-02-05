@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express, {Request, Response} from "express";
+import { connectDB } from "./database/mongo";
 import path from 'path';
 
 
@@ -21,7 +22,7 @@ app.use("/health", healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/eventos", eventosRouter);
 
-
+connectDB();
 
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
