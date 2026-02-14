@@ -22,7 +22,7 @@ app.use("/health", healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/eventos", eventosRouter);
 
-connectDB();
+// connectDB();
 
 app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
