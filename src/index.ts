@@ -1,6 +1,6 @@
 import "dotenv/config";
 import express, {Request, Response} from "express";
-import { connectDB } from "./database/mongo";
+//import { connectDB } from "./database/mongo";
 import path from 'path';
 
 
