@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 import {
   getAllEventos,
   createEvento,
@@ -36,7 +36,7 @@ export const postEvento = async (req: Request, res: Response) => {
   }
 };
 
-export const patchEvento = async (req: Request, res: Response) => {
+export const patchEvento = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id: string = toStr((req as any).params?.id);
     const userId: string = toStr((req as any).user?.id);
@@ -48,12 +48,11 @@ export const patchEvento = async (req: Request, res: Response) => {
 
     return res.json(evento);
   }  catch (error) {
-  console.error(error);
-  return res.status(500).json({ message: "Error interno" });
+  next(error);
 };
 }
 
-export const deleteEvento = async (req: Request, res: Response) => {
+export const deleteEvento = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id: string = toStr((req as any).params?.id);
     const userId: string = toStr((req as any).user?.id);
@@ -64,7 +63,6 @@ export const deleteEvento = async (req: Request, res: Response) => {
 
     return res.json({ message: "Evento eliminado correctamente" });
   } catch (error) {
-  console.error(error);
-  return res.status(500).json({ message: "Error interno" });
-};
+  next(error);
+  };
 }

@@ -1,6 +1,7 @@
 import "dotenv/config";
 import express, {Request, Response} from "express";
 //import { connectDB } from "./database/mongo";
+import { errorHandler } from "./middlewares/error.middleware";
 import path from 'path';
 
 
@@ -21,6 +22,8 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 app.use("/health", healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/eventos", eventosRouter);
+
+app.use(errorHandler);
 
 // connectDB();
 
