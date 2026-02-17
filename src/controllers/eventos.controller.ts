@@ -47,10 +47,11 @@ export const patchEvento = async (req: Request, res: Response) => {
     if (!evento) return res.status(404).json({ message: "Evento no encontrado" });
 
     return res.json(evento);
-  } catch {
-    return res.status(401).json({ message: "No autorizado" });
-  }
+  }  catch (error) {
+  console.error(error);
+  return res.status(500).json({ message: "Error interno" });
 };
+}
 
 export const deleteEvento = async (req: Request, res: Response) => {
   try {
@@ -62,7 +63,8 @@ export const deleteEvento = async (req: Request, res: Response) => {
     if (!eliminado) return res.status(404).json({ message: "Evento no encontrado" });
 
     return res.json({ message: "Evento eliminado correctamente" });
-  } catch {
-    return res.status(401).json({ message: "No autorizado" });
-  }
+  } catch (error) {
+  console.error(error);
+  return res.status(500).json({ message: "Error interno" });
 };
+}
