@@ -9,9 +9,9 @@ export const register = async (req: Request, res: Response) => {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
-    const existingUser = authService.findByEmail(email);
-    if (existingUser) {
-      return res.status(409).json({ message: "Ese email ya está registrado" });
+    const existing = await authService.findByEmail(email);
+    if (existing) {
+      return res.status(400).json({ message: "Ese email ya está registrado" });
     }
 
     const newUser = await authService.register({ name, email, password });
