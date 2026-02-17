@@ -1,11 +1,11 @@
 // Evento (Turnos veterinaria)
 export interface Evento {
   id: number;
+  userId: number;
   fecha: string;
-  hora: string;
+  createdAt: string;
   descripcion: string;
   veterinario: string;
-  userId: string;
 }
 
 export interface CrearEventoDTO {
