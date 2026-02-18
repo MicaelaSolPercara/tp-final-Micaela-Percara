@@ -1,11 +1,6 @@
 const API_BASE = "http://localhost:3000";
 
-const loginForm = document.getElementById("loginForm");
-const loginEmail = document.getElementById("loginEmail");
-const loginPassword = document.getElementById("loginPassword");
-const loginStatus = document.getElementById("loginStatus");
 const logoutBtn = document.getElementById("logoutBtn");
-
 const createForm = document.getElementById("createForm");
 const fecha = document.getElementById("fecha");
 const hora = document.getElementById("hora");
@@ -21,23 +16,13 @@ function getToken() {
   return localStorage.getItem("token");
 }
 
-function setToken(token) {
-  localStorage.setItem("token", token);
-}
-
 function clearToken() {
   localStorage.removeItem("token");
 }
 
-function updateAuthUI() {
-  const token = getToken();
-  if (token) {
-    loginStatus.textContent = "✅ Sesión iniciada";
-    logoutBtn.style.display = "inline-block";
-  } else {
-    loginStatus.textContent = "⚠️ No logueada";
-    logoutBtn.style.display = "none";
-  }
+// Si no hay token, volvemos a auth
+if (!getToken()) {
+  window.location.href = "./index.html";
 }
 
 // --- API helpers ---
@@ -45,61 +30,32 @@ async function apiFetch(path, options = {}) {
   const token = getToken();
   const headers = options.headers ? { ...options.headers } : {};
 
-  if (token) {
-    headers["Authorization"] = `Bearer ${token}`;
-  }
+  headers["Authorization"] = `Bearer ${token}`;
 
   return fetch(`${API_BASE}${path}`, { ...options, headers });
 }
 
-// --- Login ---
-loginForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
-
-  loginStatus.textContent = "Ingresando...";
-
-  const res = await fetch(`${API_BASE}/api/auth/login`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      email: loginEmail.value,
-      password: loginPassword.value,
-    }),
-  });
-
-  const data = await res.json().catch(() => ({}));
-
-  if (!res.ok) {
-    loginStatus.textContent = `❌ Error: ${data.message || "No se pudo loguear"}`;
-    return;
-  }
-
-  setToken(data.token);
-  updateAuthUI();
-  await loadEventos();
-});
-
 // --- Logout ---
 logoutBtn.addEventListener("click", () => {
   clearToken();
-  updateAuthUI();
-  eventosList.innerHTML = "";
+  window.location.href = "./index.html";
 });
 
 // --- Listar eventos ---
 async function loadEventos() {
-  const token = getToken();
-  if (!token) {
-    eventosList.innerHTML = "<li>⚠️ Iniciá sesión para ver tus eventos</li>";
-    return;
-  }
-
   eventosList.innerHTML = "<li>Cargando...</li>";
 
   const res = await apiFetch("/api/eventos", { method: "GET" });
   const data = await res.json().catch(() => ([]));
 
   if (!res.ok) {
+    // Si el token expiró o es inválido, volvemos a auth
+    if (res.status === 401 || res.status === 403) {
+      clearToken();
+      window.location.href = "./index.html";
+      return;
+    }
+
     eventosList.innerHTML = `<li>❌ Error al cargar: ${data.message || "Error"}</li>`;
     return;
   }
@@ -117,8 +73,7 @@ async function loadEventos() {
       <button data-id="${ev.id}">Eliminar</button>
     `;
 
-    const btn = li.querySelector("button");
-    btn.addEventListener("click", async () => {
+    li.querySelector("button").addEventListener("click", async () => {
       await deleteEvento(ev.id);
     });
 
@@ -148,6 +103,12 @@ createForm.addEventListener("submit", async (e) => {
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
+    if (res.status === 401 || res.status === 403) {
+      clearToken();
+      window.location.href = ".app.html";
+      return;
+    }
+
     createStatus.textContent = `❌ Error: ${data.message || "No se pudo crear"}`;
     return;
   }
@@ -163,6 +124,12 @@ async function deleteEvento(id) {
   const data = await res.json().catch(() => ({}));
 
   if (!res.ok) {
+    if (res.status === 401 || res.status === 403) {
+      clearToken();
+      window.location.href = "./index.html";
+      return;
+    }
+
     alert(`❌ Error al eliminar: ${data.message || "Error"}`);
     return;
   }
@@ -171,5 +138,4 @@ async function deleteEvento(id) {
 }
 
 // --- Init ---
-updateAuthUI();
 loadEventos();

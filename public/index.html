@@ -3,10 +3,29 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patitas Felices - Eventos</title>
+  <title>Patitas Felices - Acceso</title>
 </head>
 <body>
-  <h1>Patitas Felices - CRUD de Eventos</h1>
+  <h1>Patitas Felices</h1>
+
+  <section>
+    <h2>Register</h2>
+    <form id="registerForm">
+      <label>Nombre</label><br />
+      <input id="registerName" type="text" required /><br /><br />
+
+      <label>Email</label><br />
+      <input id="registerEmail" type="email" required /><br /><br />
+
+      <label>Password</label><br />
+      <input id="registerPassword" type="password" required /><br /><br />
+
+      <button type="submit">Crear cuenta</button>
+    </form>
+    <p id="registerStatus"></p>
+  </section>
+
+  <hr />
 
   <section>
     <h2>Login</h2>
@@ -19,42 +38,9 @@
 
       <button type="submit">Ingresar</button>
     </form>
-
     <p id="loginStatus"></p>
-    <button id="logoutBtn" type="button" style="display:none;">Cerrar sesión</button>
   </section>
 
-  <hr />
-
-  <section>
-    <h2>Crear evento</h2>
-    <form id="createForm">
-      <label>Fecha (YYYY-MM-DD)</label><br />
-      <input id="fecha" type="date" required /><br /><br />
-
-      <label>Hora (HH:mm)</label><br />
-      <input id="hora" type="time" required /><br /><br />
-
-      <label>Veterinario</label><br />
-      <input id="veterinario" type="text" required /><br /><br />
-
-      <label>Descripción</label><br />
-      <input id="descripcion" type="text" required /><br /><br />
-
-      <button type="submit">Crear</button>
-    </form>
-
-    <p id="createStatus"></p>
-  </section>
-
-  <hr />
-
-  <section>
-    <h2>Mis eventos</h2>
-    <button id="refreshBtn" type="button">Actualizar lista</button>
-    <ul id="eventosList"></ul>
-  </section>
-
-  <script src="./app.js"></script>
+  <script src="./auth.js"></script>
 </body>
 </html>
