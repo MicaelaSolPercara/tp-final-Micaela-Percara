@@ -4,42 +4,64 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Patitas Felices - Acceso</title>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <h1>Patitas Felices</h1>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <h1>🐾 Patitas Felices</h1>
+        <p>Ingresá o creá tu cuenta para gestionar tus eventos/turnos.</p>
+      </div>
+    </div>
 
-  <section>
-    <h2>Register</h2>
-    <form id="registerForm">
-      <label>Nombre</label><br />
-      <input id="registerName" type="text" required /><br /><br />
+    <div class="grid two">
+      <section class="card">
+        <h2>Crear cuenta</h2>
 
-      <label>Email</label><br />
-      <input id="registerEmail" type="email" required /><br /><br />
+        <form id="registerForm" class="row">
+          <div>
+            <label>Nombre</label>
+            <input id="registerName" type="text" required />
+          </div>
 
-      <label>Password</label><br />
-      <input id="registerPassword" type="password" required /><br /><br />
+          <div>
+            <label>Email</label>
+            <input id="registerEmail" type="email" required />
+          </div>
 
-      <button type="submit">Crear cuenta</button>
-    </form>
-    <p id="registerStatus"></p>
-  </section>
+          <div>
+            <label>Password</label>
+            <input id="registerPassword" type="password" required />
+          </div>
 
-  <hr />
+          <button class="btn-primary" type="submit">Registrarme</button>
+        </form>
 
-  <section>
-    <h2>Login</h2>
-    <form id="loginForm">
-      <label>Email</label><br />
-      <input id="loginEmail" type="email" required /><br /><br />
+        <p id="registerStatus" class="msg"></p>
+      </section>
 
-      <label>Password</label><br />
-      <input id="loginPassword" type="password" required /><br /><br />
+      <section class="card">
+        <h2>Iniciar sesión</h2>
 
-      <button type="submit">Ingresar</button>
-    </form>
-    <p id="loginStatus"></p>
-  </section>
+        <form id="loginForm" class="row">
+          <div>
+            <label>Email</label>
+            <input id="loginEmail" type="email" required />
+          </div>
+
+          <div>
+            <label>Password</label>
+            <input id="loginPassword" type="password" required />
+          </div>
+
+          <button class="btn-primary" type="submit">Ingresar</button>
+        </form>
+
+        <p id="loginStatus" class="msg"></p>
+      </section>
+    </div>
+  </div>
 
   <script src="./auth.js"></script>
 </body>

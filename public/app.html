@@ -3,43 +3,63 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patitas Felices - CRUD</title>
+  <title>Patitas Felices - Turnos</title>
+  <link rel="stylesheet" href="./styles.css" />
 </head>
 <body>
-  <h1>Patitas Felices - CRUD de Eventos</h1>
+  <div class="container">
+    <div class="header">
+      <div class="brand">
+        <h1>📅 Mis Turnos</h1>
+        <p>Creá y administrá tus turnos veterinarios.</p>
+      </div>
 
-  <button id="logoutBtn" type="button">Cerrar sesión</button>
+      <button id="logoutBtn" class="btn-ghost" type="button">Cerrar sesión</button>
+    </div>
 
-  <hr />
+    <div class="grid two">
+      <section class="card">
+        <h2>Nuevo turno</h2>
 
-  <section>
-    <h2>Crear evento</h2>
-    <form id="createForm">
-      <label>Fecha (YYYY-MM-DD)</label><br />
-      <input id="fecha" type="date" required /><br /><br />
+        <form id="createForm" class="row">
+          <div class="row two">
+            <div>
+              <label>Fecha</label>
+              <input id="fecha" type="date" required />
+            </div>
 
-      <label>Hora (HH:mm)</label><br />
-      <input id="hora" type="time" required /><br /><br />
+            <div>
+              <label>Hora</label>
+              <input id="hora" type="time" required />
+            </div>
+          </div>
 
-      <label>Veterinario</label><br />
-      <input id="veterinario" type="text" required /><br /><br />
+          <div>
+            <label>Veterinario</label>
+            <input id="veterinario" type="text" required />
+          </div>
 
-      <label>Descripción</label><br />
-      <input id="descripcion" type="text" required /><br /><br />
+          <div>
+            <label>Descripción</label>
+            <input id="descripcion" type="text" required />
+          </div>
 
-      <button type="submit">Crear</button>
-    </form>
+          <button class="btn-primary" type="submit">Crear</button>
+        </form>
 
-    <p id="createStatus"></p>
-  </section>
+        <p id="createStatus" class="msg"></p>
+      </section>
 
-  <hr />
+      <section class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:12px;">
+          <h2 style="margin:0;">Mis turnos</h2>
+          <button id="refreshBtn" type="button">Actualizar</button>
+        </div>
 
-  <section>
-    <h2>Mis eventos</h2>
-    <button id="refreshBtn" type="button">Actualizar lista</button>
-    <ul id="eventosList"></ul>
-  </section>
+        <ul id="eventosList" class="list" style="margin-top:14px;"></ul>
+      </section>
+    </div>
+  </div>
 
   <script src="./app.js"></script>
 </body>
