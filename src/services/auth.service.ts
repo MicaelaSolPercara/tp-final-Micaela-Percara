@@ -26,13 +26,13 @@ export const authService = {
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
 
-  const role = data.role ?? "VET";
+  const roleId = data.roleId ?? 3;
 
   const newUser = await usersMysqlModel.create({
     name: data.name,
     email: data.email,
     passwordHash: hashedPassword,
-    role,
+    roleId,
   });
 
   return newUser;
@@ -53,7 +53,7 @@ export const authService = {
     issuer: "curso-utn-backend",
   };
 
-  return jwt.sign({ id: user.id, email: user.email }, secretKey, options);
+  return jwt.sign({ id: user.id, email: user.email, roleId: user.roleId }, secretKey, options);
 },
 
 }

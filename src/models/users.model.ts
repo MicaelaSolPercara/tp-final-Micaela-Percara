@@ -5,7 +5,7 @@ export interface User {
   name: string;
   email: string;
   passwordHash: string;
-  role: "ADMIN" | "VET",
+  roleId: number;
   createdAt: Date;
 }
 
@@ -13,7 +13,7 @@ export interface CreateUserDTO {
   name: string;
   email: string;
   password: string;
-  role?: "ADMIN" | "VET";
+  roleId?: number;
 }
 
 export const users: User[] = [];

@@ -6,7 +6,7 @@ type UserRow = {
   name: string;
   email: string;
   password_hash: string;
-  role: "ADMIN" | "VET";
+  role_id: number;
   created_at: Date;
 };
 
@@ -27,7 +27,7 @@ export const usersMysqlModel = {
       name: u.name,
       email: u.email,
       passwordHash: u.password_hash,
-      role: u.role,
+      roleId: u.role_id,
       createdAt: new Date(u.created_at),
     };
   },
@@ -36,11 +36,11 @@ export const usersMysqlModel = {
     name: string;
     email: string;
     passwordHash: string;
-    role: "ADMIN" | "VET";
+    roleId: number;
   }): Promise<User> => {
     const [result] = await pool.query<any>(
       "INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)",
-      [data.name, data.email, data.passwordHash, data.role]
+      [data.name, data.email, data.passwordHash, data.roleId]
     );
 
     const newUser: User = {
@@ -48,7 +48,7 @@ export const usersMysqlModel = {
       name: data.name,
       email: data.email,
       passwordHash: data.passwordHash,
-      role: data.role,
+      roleId: data.roleId,
       createdAt: new Date(),
     };
 
