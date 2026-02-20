@@ -7,11 +7,15 @@ export const getAllEventos = async (userId: string) => {
   return eventosMysqlModel.findAllByUserId(Number(userId));
 };
 
-export const createEvento = async (userId: string, data: CrearEventoDTO) => {
+export const createEvento = async (userId: string, roleId:number, data: CrearEventoDTO) => {
+  if (roleId === 3) {
+    throw new Error ("No tienes permisos para crear eventos (turnos)");
+  }
   return eventosMysqlModel.create({
     userId: Number(userId),
+    mascotaId: data.mascotaId,
+    veterinarioId: data.veterinarioId,
     descripcion: data.descripcion,
-    veterinario: data.veterinario,
     fecha: toMysqlDateTime(data.fecha, data.hora),
   });
 };
@@ -19,16 +23,22 @@ export const createEvento = async (userId: string, data: CrearEventoDTO) => {
 export const actualizarEvento = async (
   id: string,
   userId: string,
+  roleId: number,
   datos: ActualizarEventoDTO
 ) => {
+  if (roleId === 3) {
+    throw new Error("No tienes permisos para modificar turnos");
+  }
+
   const updateData: any = {
     id: Number(id),
     userId: Number(userId),
+    roleId: roleId,
   };
 
+  if (datos.mascotaId !== undefined) updateData.mascotaId = datos.mascotaId;
+  if (datos.veterinarioId !== undefined) updateData.veterinarioId = datos.veterinarioId;
   if (datos.descripcion !== undefined) updateData.descripcion = datos.descripcion;
-  if (datos.veterinario !== undefined) updateData.veterinario = datos.veterinario;
-
   if (datos.fecha && datos.hora) {
     updateData.fecha = toMysqlDateTime(datos.fecha, datos.hora);
   }
@@ -40,6 +50,6 @@ export const actualizarEvento = async (
   return eventosMysqlModel.findByIdAndUserId(Number(id), Number(userId));
 };
 
-export const eliminarEvento = async (id: string, userId: string) => {
-  return eventosMysqlModel.deleteByIdAndUserId(Number(id), Number(userId));
+export const eliminarEvento = async (id: string, userId: string, roleId:number) => {
+  return eventosMysqlModel.deleteByIdAndUserId(Number(id), Number(userId), roleId);
 };

@@ -2,22 +2,25 @@
 export interface Evento {
   id: number;
   userId: number;
+  mascotaId: number;
+  veterinarioId: number;
   fecha: string;
   createdAt: string;
   descripcion: string;
-  veterinario: string;
 }
 
 export interface CrearEventoDTO {
   fecha: string;
   hora: string;
   descripcion: string;
-  veterinario: string;
+  mascotaId: number;
+  veterinarioId: number;
 }
 
 export interface ActualizarEventoDTO {
   fecha?: string;
   hora?: string;
   descripcion?: string;
-  veterinario?: string;
+  mascotaId?: number;
+  veterinarioId?: number;
 }
