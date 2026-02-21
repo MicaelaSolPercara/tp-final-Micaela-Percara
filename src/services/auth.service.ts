@@ -26,13 +26,16 @@ export const authService = {
 
   const hashedPassword = await bcrypt.hash(data.password, 10);
 
-  const roleId = data.roleId ?? 3;
+  if(!data.roleId){
+    throw new Error("roleId es obligatorio");
+  }
+
 
   const newUser = await usersMysqlModel.create({
     name: data.name,
     email: data.email,
     passwordHash: hashedPassword,
-    roleId,
+    roleId:data.roleId,
   });
 
   return newUser;

@@ -5,21 +5,47 @@ export const crearMascota = async (req: Request, res: Response) => {
   try {
     const { nombre, especie, fecha_nacimiento, id_dueno } = req.body;
 
-    if (!nombre || !especie || !fecha_nacimiento || !id_dueno ) {
+    if (!nombre || !especie || !fecha_nacimiento || !id_dueno) {
       return res.status(400).json({ message: "Faltan datos obligatorios" });
     }
 
-    const mascotaRepetida = await mascotasService.buscarPorNombreYDueno(nombre, id_dueno);
-    if (mascotaRepetida) {
-      return res.status(400).json({ message: "Esa mascota ya está registrada" });
+   const nuevaMascota = await mascotasService.register({nombre, 
+        especie, 
+        fecha_nacimiento, 
+        id_dueno});
+    
+    return res.status(201).json({
+        message: "Mascota creada con éxito",
+        mascota: nuevaMascota
+    });
+
+  } catch (error: any) {
+    
+    if (error.message === "La mascota ya está registrada") {
+      return res.status(409).json({ message: error.message });
+    }
+    
+    return res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+
+export const getMascotas = async (req: Request, res: Response) => {
+  try {
+    const id_dueno = (req as any).user?.id;
+
+    if (!id_dueno) {
+      return res.status(401).json({ message: "No autorizado: No se encontró el ID de usuario" });
     }
 
-    const newMascota = await mascotasService.register({ nombre, especie, fecha_nacimiento, id_dueno });
-    return res.status(201).json({
-      message: "Mascota creada",
-      mascota: newMascota
-    });
+    const listaMascotas = await mascotasService.obtenerPorDueno(Number(id_dueno));
+
+    return res.status(200).json(listaMascotas);
+
   } catch (error) {
-    return res.status(500).json({ message: "Error al registrar la mascota" });
-  };
+    console.error("Error en getMascotas:", error);
+    return res.status(500).json({ message: "Error al obtener la lista de mascotas" });
+  }
 };
+
+   
+

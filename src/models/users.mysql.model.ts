@@ -13,7 +13,7 @@ type UserRow = {
 export const usersMysqlModel = {
   findByEmail: async (email: string): Promise<User | null> => {
     const [rows] = await pool.query(
-      "SELECT id, name, email, password_hash, role, created_at FROM users WHERE email = ? LIMIT 1",
+      "SELECT id, name, email, password_hash, role_id, created_at FROM users WHERE email = ? LIMIT 1",
       [email]
     );
 
@@ -39,7 +39,7 @@ export const usersMysqlModel = {
     roleId: number;
   }): Promise<User> => {
     const [result] = await pool.query<any>(
-      "INSERT INTO users (name, email, password_hash, role) VALUES (?, ?, ?, ?)",
+      "INSERT INTO users (name, email, password_hash, role_id) VALUES (?, ?, ?, ?)",
       [data.name, data.email, data.passwordHash, data.roleId]
     );
 

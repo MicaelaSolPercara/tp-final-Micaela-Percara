@@ -8,7 +8,7 @@ import path from 'path';
 import healthRouter from "./routes/health.routes";
 import authRouter from "./routes/auth.routes";
 import eventosRouter from "./routes/eventos.routes";
-
+import usersRouter from "./routes/users.routes";
 
 
 
@@ -22,6 +22,7 @@ app.use(express.static(path.join(__dirname, "..", "public")));
 app.use("/health", healthRouter);
 app.use("/api/auth", authRouter);
 app.use("/api/eventos", eventosRouter);
+app.use("/api/users", usersRouter);
 
 app.use(errorHandler);
 

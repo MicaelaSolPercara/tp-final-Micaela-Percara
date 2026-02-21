@@ -18,4 +18,9 @@ export const mascotasService = {
   return await mascotasMysqlModel.create(data);
 },
 
+obtenerPorDueno: async (id_dueno: number): Promise<Mascotas[]> => {
+    return await mascotasMysqlModel.buscarPorDueno(id_dueno);
+  },
 };
+
+

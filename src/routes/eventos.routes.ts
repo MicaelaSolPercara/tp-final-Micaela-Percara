@@ -28,12 +28,19 @@ const createEventoValidations = [
     .isLength({ min: 5 })
     .withMessage("La descripción debe tener al menos 5 caracteres"),
 
-  body("veterinario")
+  body("mascotaId")
+    .notEmpty()
+    .withMessage("La mascota es obligatoria")
+    .bail()
+    .isInt({ min: 1 })
+    .withMessage("MascotaId debe ser un numero entero valido"),
+
+    body("veterinarioId")
     .notEmpty()
     .withMessage("El veterinario es obligatorio")
     .bail()
-    .isLength({ min: 3 })
-    .withMessage("El veterinario debe tener al menos 3 caracteres"),
+    .isInt({min: 1})
+    .withMessage("VeterinarioId debe ser un numero entero")
 ];
 
 const updateEventoValidations = [
@@ -52,16 +59,20 @@ const updateEventoValidations = [
     .isLength({ min: 5 })
     .withMessage("La descripción debe tener al menos 5 caracteres"),
 
-  body("veterinario")
+  body("mascotaId")
     .optional()
-    .isLength({ min: 3 })
-    .withMessage("El veterinario debe tener al menos 3 caracteres"),
+    .isInt({ min: 1 })
+    .withMessage("MascotaId debe ser un numero entero valido"),
+
+    body("veterinarioId")
+    .optional()
+    .isInt({min: 1})
+    .withMessage("VeterinarioId debe ser un numero entero")
 ];
 
 const idParamValidation = [
   param("id")
     .custom((value) => {
-      // solo números enteros positivos (1,2,3...)
       if (!/^\d+$/.test(value)) {
         throw new Error("El id debe ser un número entero válido");
       }
