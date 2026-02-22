@@ -34,6 +34,7 @@ src/
 ├── routes/
 ├── middlewares/
 ├── database/
+├── types/
 └── index.ts
 
 
@@ -89,11 +90,11 @@ Desde phpMyAdmin:
 ## 👤 Usuarios de prueba
 
 ADMIN:
-- Email: admin@patitas.com
+- Email: administradora@patitas.com
 - Password: 123456
 
 VETERINARIO:
-- Email: vet@patitas.com
+- Email: veterinario@patitas.com
 - Password: 123456
 
 DUENO:
