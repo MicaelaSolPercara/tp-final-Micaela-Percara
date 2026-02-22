@@ -12,6 +12,64 @@ type EventoRow = {
 };
 
 export const eventosMysqlModel = {
+  // ADMIN: trae todos los eventos
+  findAll: async (): Promise<Evento[]> => {
+    const [rows] = await pool.query(
+      `SELECT 
+         id,
+         user_id,
+         mascota_id AS mascotaId,
+         veterinario_id AS veterinarioId,
+         descripcion,
+         fecha,
+         created_at
+       FROM eventos
+       ORDER BY created_at DESC`
+    );
+
+    const typedRows = rows as EventoRow[];
+
+    return typedRows.map((e) => ({
+      id: e.id,
+      userId: e.user_id,
+      mascotaId: Number(e.mascotaId ?? 0),
+      veterinarioId: Number(e.veterinarioId ?? 0),
+      descripcion: e.descripcion ?? "",
+      fecha: new Date(e.fecha).toISOString(),
+      createdAt: new Date(e.created_at).toISOString(),
+    }));
+  },
+
+  // VET: trae eventos donde el veterinario es el usuario logueado
+  findAllByVetId: async (vetId: number): Promise<Evento[]> => {
+    const [rows] = await pool.query(
+      `SELECT 
+         id,
+         user_id,
+         mascota_id AS mascotaId,
+         veterinario_id AS veterinarioId,
+         descripcion,
+         fecha,
+         created_at
+       FROM eventos
+       WHERE veterinario_id = ?
+       ORDER BY created_at DESC`,
+      [vetId]
+    );
+
+    const typedRows = rows as EventoRow[];
+
+    return typedRows.map((e) => ({
+      id: e.id,
+      userId: e.user_id,
+      mascotaId: Number(e.mascotaId ?? 0),
+      veterinarioId: Number(e.veterinarioId ?? 0),
+      descripcion: e.descripcion ?? "",
+      fecha: new Date(e.fecha).toISOString(),
+      createdAt: new Date(e.created_at).toISOString(),
+    }));
+  },
+
   findAllByUserId: async (userId: number): Promise<Evento[]> => {
     const [rows] = await pool.query(
       `SELECT 

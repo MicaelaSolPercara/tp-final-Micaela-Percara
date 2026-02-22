@@ -12,21 +12,26 @@ const toStr = (value: any): string => {
   return String(value);
 };
 
-export const getEventos = async (req: Request, res: Response) => {
+export const getEventos = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId: string = toStr((req as any).user?.id);
+    const roleId = Number((req as any).user?.roleId);
 
-    const eventos = await getAllEventos(userId);
+    if (!userId || !roleId) {
+      return res.status(401).json({ message: "Token inválido" });
+    }
+
+    const eventos = await getAllEventos(userId, roleId);
     return res.json(eventos);
-  } catch {
-    return res.status(401).json({ message: "No autorizado" });
+  } catch (error) {
+    next(error);
   }
 };
 
-export const postEvento = async (req: Request, res: Response) => {
+export const postEvento = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userId: string = toStr((req as any).user?.id);
-    const roleId = (req as any).user?.roleId;
+    const roleId = Number((req as any).user?.roleId);
     const data: CrearEventoDTO = req.body;
 
     if (!userId || !roleId) {
@@ -35,8 +40,8 @@ export const postEvento = async (req: Request, res: Response) => {
 
     const nuevo = await createEvento(userId, roleId, data);
     return res.status(201).json(nuevo);
-  } catch {
-    return res.status(401).json({ message: "No autorizado" });
+  } catch (error) {
+    next(error);
   }
 };
 
@@ -44,7 +49,7 @@ export const patchEvento = async (req: Request, res: Response, next: NextFunctio
   try {
     const id: string = toStr((req as any).params?.id);
     const userId: string = toStr((req as any).user?.id);
-    const roleId = (req as any).user?.roleId;
+    const roleId = Number((req as any).user?.roleId);
     const datos: ActualizarEventoDTO = req.body;
 
     if (!userId || !roleId) {
@@ -56,16 +61,16 @@ export const patchEvento = async (req: Request, res: Response, next: NextFunctio
     if (!evento) return res.status(404).json({ message: "Evento no encontrado" });
 
     return res.json(evento);
-  }  catch (error) {
-  next(error);
+  } catch (error) {
+    next(error);
+  }
 };
-}
 
 export const deleteEvento = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const id: string = toStr((req as any).params?.id);
     const userId: string = toStr((req as any).user?.id);
-    const roleId = (req as any).user?.roleId;
+    const roleId = Number((req as any).user?.roleId);
 
     if (!userId || !roleId) {
       return res.status(401).json({ message: "Token inválido" });
@@ -77,6 +82,6 @@ export const deleteEvento = async (req: Request, res: Response, next: NextFuncti
 
     return res.json({ message: "Evento eliminado correctamente" });
   } catch (error) {
-  next(error);
-  };
-}
+    next(error);
+  }
+};

@@ -3,8 +3,11 @@ import type { CrearEventoDTO, ActualizarEventoDTO } from "../models/eventos.mode
 
 const toMysqlDateTime = (fecha: string, hora: string) => `${fecha} ${hora}:00`;
 
-export const getAllEventos = async (userId: string) => {
-  return eventosMysqlModel.findAllByUserId(Number(userId));
+export const getAllEventos = async (userId: string, roleId:number) => {
+  const uid = Number (userId);
+   if (roleId === 1) return eventosMysqlModel.findAll();          // admin
+  if (roleId === 2) return eventosMysqlModel.findAllByVetId(uid); // vet
+  return eventosMysqlModel.findAllByUserId(uid); //dueño
 };
 
 export const createEvento = async (userId: string, roleId: number, data: CrearEventoDTO) => {
@@ -49,7 +52,7 @@ export const actualizarEvento = async (
   if (!updated) return null;
 
   // ✅ 2 args (como define el mysql model)
-  return eventosMysqlModel.findByIdAndUserId(Number(id), Number(userId));
+  return eventosMysqlModel.findByIdAndUserId(Number(id), Number(userId), roleId);
 };
 
 export const eliminarEvento = async (id: string, userId: string, roleId: number) => {
