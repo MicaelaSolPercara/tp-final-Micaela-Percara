@@ -1,146 +1,176 @@
-# Servidor Backend – Express + MongoDB + JWT
+# 🐾 Patitas Felices – Sistema de Gestión Veterinaria
 
-Este proyecto es un servidor backend desarrollado con **Node.js**, **Express** y **MongoDB**, que implementa autenticación de usuarios mediante **JSON Web Tokens (JWT)** y sigue el patrón de arquitectura **MVC (Modelo – Vista – Controlador)**.
+Trabajo Práctico Final – Backend Developer
 
-El sistema permite a los usuarios registrarse, iniciar sesión y gestionar una entidad protegida llamada **Eventos**, donde cada evento está asociado al usuario autenticado.
+Aplicación backend desarrollada con Node.js, Express y MySQL para la gestión de turnos veterinarios, con autenticación JWT y control de acceso por roles.
 
-## Tecnologías utilizadas
+---
+
+## 🚀 Tecnologías utilizadas
 
 - Node.js
 - Express
 - TypeScript
-- MongoDB
-- Mongoose
-- JSON Web Tokens (JWT)
+- MySQL
+- JWT (jsonwebtoken)
 - bcrypt
+- express-validator
 - dotenv
+- express-rate-limit
 
-## Instalación y ejecución
+Configuración TypeScript:
+- Compilación a carpeta `dist`
+- Modo desarrollo con `ts-node-dev`
 
-### Requisitos previos
-- Node.js instalado
-- MongoDB en ejecución (local o mediante Docker)
+---
 
-### Pasos para ejecutar el proyecto
+## 🏗️ Arquitectura
 
-1. Clonar el repositorio:
+El proyecto sigue el patrón **MVC (Model - View - Controller)**:
+src/
+├── controllers/
+├── services/
+├── models/
+├── routes/
+├── middlewares/
+├── database/
+└── index.ts
 
-git clone https://github.com/MicaelaSolPercara/tp-intermedio-Micaela-Percara.git
 
+Incluye:
+- Middleware de autenticación con JWT
+- Middleware centralizado de manejo de errores
+- Validaciones robustas con express-validator
+- Control de acceso basado en roles
+
+---
+
+## 👥 Sistema de Roles
+
+| Rol       | ID | Permisos |
+|------------|----|----------|
+| ADMIN      | 1  | Puede crear, editar y eliminar turnos |
+| VET        | 2  | Puede crear y modificar turnos |
+| DUENO      | 3  | Solo puede visualizar turnos |
+
+---
+
+## 🔐 Autenticación
+
+Se utiliza JWT para autenticación.
+
+El token debe enviarse en cada request protegida:
+
+
+---
+
+## 🗄️ Base de Datos
+
+El proyecto utiliza MySQL.
+
+Se incluye un dump de la base de datos:
+
+Este archivo contiene:
+- Estructura de tablas
+- Relaciones (Foreign Keys)
+- Roles preconfigurados
+- Usuarios de prueba
+
+### Restaurar base de datos
+
+Desde phpMyAdmin:
+1. Crear base de datos nueva
+2. Ir a Importar
+3. Seleccionar `veterinaria_patitas_felices.sql`
+4. Ejecutar
+
+---
+
+## 👤 Usuarios de prueba
+
+ADMIN:
+- Email: admin@patitas.com
+- Password: 123456
+
+VETERINARIO:
+- Email: vet@patitas.com
+- Password: 123456
+
+DUENO:
+- Email: dueno@patitas.com
+- Password: 123456
+
+---
+
+## ⚙️ Instalación
+
+1. Clonar repositorio
 2. Instalar dependencias:
 
-npm install
+3. Crear archivo `.env` basado en `.env.example`
 
-3. Crear el archivo .env en la raíz del proyecto siguiendo el ejemplo .env.example.
+4. Ejecutar proyecto:
 
-4. Ejecutar el servidor en modo desarrollo:
+Modo desarrollo: npm run dev
 
-npm run dev
-
-El servidor quedará escuchando en:
-
-http://localhost:3000
-
-## Variables de entorno
-
-El proyecto utiliza variables de entorno para manejar datos sensibles y configuraciones.
-
-Se debe crear un archivo `.env` en la raíz del proyecto con las siguientes variables:
-
-PORT=3000
-
-JWT_SECRET=tu_clave_secreta
-JWT_EXPIRES_IN=1h
-
-MONGODB_URI=mongodb://localhost:27017/tp_backend
-
-## Endpoints disponibles
-
-### Autenticación (públicos)
-
-#### Registrar usuario
-- **POST** `/api/auth/register`
-
-Body (JSON):
-{
-  "name": "Micaela",
-  "email": "mica@test.com",
-  "password": "123456"
-}
-
-#### Login
-**POST** /api/auth/login
-
-Body (JSON):
-{
-  "email": "mica@test.com",
-  "password": "123456"
-}
-
-Devuelve un token JWT que debe enviarse en los endpoints protegidos.
-
-#### Eventos (protegidos)
-
-Todos los endpoints de eventos requieren el header:
-
-Authorization: Bearer <token>
-
-#### Listar eventos del usuario
-
-**GET** /api/eventos
-
-#### Crear evento
-
-**POST** /api/eventos
-
-Body (JSON):
-
-{
-  "fecha": "2026-02-04",
-  "hora": "15:30",
-  "descripcion": "Control anual",
-  "veterinario": "Dra. Lopez"
-}
-
-#### Actualizar evento
-
-**PATCH** /api/eventos/:id
-
-#### Eliminar evento
-
-**DELETE** /api/eventos/:id
-
-## Arquitectura (MVC)
-
-El proyecto está organizado siguiendo el patrón **MVC**, separando responsabilidades:
-
-- **Routes**: definen las rutas/endpoints y aplican middlewares.
-- **Controllers**: reciben la request, extraen datos y responden.
-- **Services**: contienen la lógica de negocio (por ejemplo: validar que el evento pertenezca al usuario).
-- **Models**: definen la estructura de datos (DTOs y modelos de MongoDB con Mongoose).
-- **Middlewares**: autenticación JWT y manejo de acceso.
-
-Estructura de carpetas:
-
-src/
-controllers/
-services/
-models/
-routes/
-middlewares/
-database/
-types/
+Modo producción: npm run dev build
+                 npm start
 
 
-## Pruebas (Postman / Thunder Client)
+Servidor disponible en: http://localhost:3000
 
-Flujo recomendado para probar:
 
-1. **POST** `/api/auth/register` 
-2. **POST** `/api/auth/login` 
-3. Usar el token en `Authorization: Bearer <token>`
-4. Probar eventos:
-   - **POST** `/api/eventos`
-   - **GET** `/api/eventos`
-   - **PATCH** `/api/eventos/:id`
-   - **DELETE** `/api/eventos/:id`
+---
+
+## 📌 Endpoints principales
+
+### Auth
+- POST `/api/auth/register`
+- POST `/api/auth/login`
+
+### Eventos (protegidos)
+- GET `/api/eventos`
+- POST `/api/eventos`
+- PATCH `/api/eventos/:id`
+- DELETE `/api/eventos/:id`
+
+---
+
+## 🎨 Frontend
+
+La carpeta `public/` contiene las vistas HTML, CSS y JavaScript del sistema.
+
+El diseño visual fue realizado utilizando **Stitch** para la maquetación inicial y posteriormente adaptado manualmente al proyecto.
+
+---
+
+## 🤖 Uso de Inteligencia Artificial
+
+Se utilizó Inteligencia Artificial como asistente técnico para:
+
+- Resolución de errores
+- Explicación de conceptos
+- Mejora estructural del código
+- Optimización de validaciones
+- Apoyo en debugging
+
+El código fue comprendido, adaptado y validado manualmente.
+
+---
+
+## 📚 Conceptos aplicados
+
+- Arquitectura MVC
+- Autenticación con JWT
+- Hash de contraseñas con bcrypt
+- Control de acceso por roles
+- Manejo centralizado de errores
+- Validaciones con express-validator
+- Conexión a MySQL mediante pool de conexiones
+
+---
+
+## ✨ Autora
+
+Micaela Percara  
+Trabajo Práctico Final – Backend
