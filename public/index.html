@@ -1,68 +1,139 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Patitas Felices - Acceso</title>
-  <link rel="stylesheet" href="./styles.css" />
-</head>
-<body>
-  <div class="container">
-    <div class="header">
-      <div class="brand">
-        <h1>🐾 Patitas Felices</h1>
-        <p>Ingresá o creá tu cuenta para gestionar tus eventos/turnos.</p>
-      </div>
-    </div>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patitas Felices | Ingreso</title>
 
-    <div class="grid two">
-      <section class="card">
-        <h2>Crear cuenta</h2>
+    <!-- Fuente -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
 
-        <form id="registerForm" class="row">
-          <div>
-            <label>Nombre</label>
-            <input id="registerName" type="text" required />
+    <!-- Íconos (Material Symbols) -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <main class="auth-shell">
+      <section class="auth-card">
+        <!-- Lado Izquierdo (branding) -->
+        <aside class="brand">
+          <div class="brand__top">
+            <div class="brand__logo" aria-hidden="true">
+              <span class="material-symbols-outlined">pets</span>
+            </div>
+
+            <div>
+              <h1 class="brand__title">Patitas Felices</h1>
+              <p class="brand__subtitle">Sistema de gestión veterinaria</p>
+            </div>
           </div>
 
-          <div>
-            <label>Email</label>
-            <input id="registerEmail" type="email" required />
+          <div class="brand__quote">
+            <p class="brand__quoteText">“Cuidamos a quienes cuidan a los animales.”</p>
+
+            <div class="brand__badge">
+              <div class="brand__badgeIcon" aria-hidden="true">
+                <span class="material-symbols-outlined">medical_services</span>
+              </div>
+              <div>
+                <p class="brand__badgeTitle">Acceso al sistema</p>
+                <p class="brand__badgeSub">Turnos • Mascotas • Veterinarios</p>
+              </div>
+            </div>
           </div>
 
-          <div>
-            <label>Password</label>
-            <input id="registerPassword" type="password" required />
+          <div class="brand__dots" aria-hidden="true">
+            <span class="dot dot--active"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
           </div>
 
-          <button class="btn-primary" type="submit">Registrarme</button>
-        </form>
+          <div class="brand__decor" aria-hidden="true">
+            <span class="material-symbols-outlined">healing</span>
+          </div>
+        </aside>
 
-        <p id="registerStatus" class="msg"></p>
+        <!-- Lado Derecho (form) -->
+        <section class="formSide">
+          <header class="formHeader">
+            <div class="formHeader__mobileLogo">
+              <span class="material-symbols-outlined">pets</span>
+              <span>Patitas Felices</span>
+            </div>
+
+            <h2>Bienvenida</h2>
+            <p>Ingresá para gestionar tu veterinaria.</p>
+          </header>
+
+          <form id="loginForm" class="form" novalidate>
+            <label class="field">
+              <span class="field__label">Email</span>
+              <span class="field__control">
+                <span class="field__icon material-symbols-outlined">mail</span>
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  autocomplete="email"
+                  required
+                />
+              </span>
+            </label>
+
+            <label class="field">
+              <span class="field__label">Contraseña</span>
+              <span class="field__control">
+                <span class="field__icon material-symbols-outlined">lock</span>
+                <input
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="••••••••"
+                  required
+                />
+                <button id="togglePassword" class="iconBtn" type="button" aria-label="Mostrar contraseña">
+                  <span class="material-symbols-outlined">visibility</span>
+                </button>
+              </span>
+            </label>
+
+          
+            <button id="submitBtn" class="primaryBtn" type="submit">
+              Ingresar
+              <span class="material-symbols-outlined">arrow_forward</span>
+            </button>
+
+            <p id="errorBox" class="error" role="alert" aria-live="polite"></p>
+          </form>
+
+          <footer class="support">
+            <div class="support__line">
+              <span></span><p>¿Necesitás ayuda?</p><span></span>
+            </div>
+
+            <button class="secondaryBtn" type="button" onclick="alert('Soporte: implementalo como quieras 🙂')">
+              <span class="material-symbols-outlined">contact_support</span>
+              Contactar soporte
+            </button>
+          </footer>
+        </section>
       </section>
 
-      <section class="card">
-        <h2>Iniciar sesión</h2>
+      <!-- decoraciones -->
+      <div class="bgBlob bgBlob--a" aria-hidden="true"></div>
+      <div class="bgBlob bgBlob--b" aria-hidden="true"></div>
+    </main>
 
-        <form id="loginForm" class="row">
-          <div>
-            <label>Email</label>
-            <input id="loginEmail" type="email" required />
-          </div>
-
-          <div>
-            <label>Password</label>
-            <input id="loginPassword" type="password" required />
-          </div>
-
-          <button class="btn-primary" type="submit">Ingresar</button>
-        </form>
-
-        <p id="loginStatus" class="msg"></p>
-      </section>
-    </div>
-  </div>
-
-  <script src="./auth.js"></script>
-</body>
+    <script src="./index.js"></script>
+  </body>
 </html>

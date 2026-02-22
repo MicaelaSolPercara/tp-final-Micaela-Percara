@@ -1,0 +1,266 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Patitas Felices | Turnos</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght@100..700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+
+  <body>
+    <div class="layout">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="brand">
+          <div class="brand__icon">
+            <span class="material-symbols-outlined">pets</span>
+          </div>
+          <div>
+            <h1>Patitas Felices</h1>
+            <p>Consola de gestión</p>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a class="nav__item nav__item--active" href="/eventos.html">
+            <span class="material-symbols-outlined">calendar_month</span>
+            <span>Turnos</span>
+          </a>
+        </nav>
+
+        <div class="sidebar__footer">
+          <div class="userCard">
+            <div class="userCard__avatar" aria-hidden="true">
+              <span class="material-symbols-outlined">person</span>
+            </div>
+
+            <div class="userCard__meta">
+              <p id="userName" class="userCard__name">—</p>
+              <p id="userRole" class="userCard__role">—</p>
+            </div>
+
+            <button id="logoutBtn" class="iconBtn" title="Salir" type="button">
+              <span class="material-symbols-outlined">logout</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+
+      <!-- Main -->
+      <main class="main">
+        <!-- Header -->
+        <header class="topbar">
+          <div class="search">
+            <span class="material-symbols-outlined">search</span>
+            <input
+              id="searchInput"
+              type="text"
+              placeholder="Buscar por descripción, fecha, mascotaId, veterinarioId..."
+            />
+          </div>
+
+          <div class="topbar__actions">
+            <button id="refreshBtn" class="ghostBtn" type="button" title="Recargar">
+              <span class="material-symbols-outlined">refresh</span>
+            </button>
+
+            <button id="newBtn" class="primaryBtn" type="button">
+              <span class="material-symbols-outlined">add</span>
+              Nuevo turno
+            </button>
+
+            <!-- Solo ADMIN lo ve (JS le saca hidden) -->
+            <button id="newUserBtn" class="ghostBtn hidden" type="button">
+              <span class="material-symbols-outlined">person_add</span>
+              Nuevo usuario
+            </button>
+          </div>
+        </header>
+
+        <section class="content">
+          <!-- Stats -->
+          <div class="stats">
+            <div class="stat">
+              <div class="stat__head">
+                <p>Total de turnos</p>
+                <span class="material-symbols-outlined">event_available</span>
+              </div>
+              <div class="stat__value">
+                <h3 id="statTotal">0</h3>
+              </div>
+            </div>
+
+            <div class="stat">
+              <div class="stat__head">
+                <p>Hoy</p>
+                <span class="material-symbols-outlined">today</span>
+              </div>
+              <div class="stat__value">
+                <h3 id="statHoy">0</h3>
+              </div>
+            </div>
+
+            <div class="stat">
+              <div class="stat__head">
+                <p>Próximos 7 días</p>
+                <span class="material-symbols-outlined">date_range</span>
+              </div>
+              <div class="stat__value">
+                <h3 id="statSemana">0</h3>
+              </div>
+            </div>
+          </div>
+
+          <!-- Tabla -->
+          <div class="panel">
+            <div class="panel__head">
+              <h2>Agenda de turnos</h2>
+              <p id="panelHint" class="hint">—</p>
+            </div>
+
+            <div class="tableWrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Mascota (ID)</th>
+                    <th>Veterinario (ID)</th>
+                    <th>Descripción</th>
+                    <th>Fecha y hora</th>
+                    <th class="right">Acciones</th>
+                  </tr>
+                </thead>
+
+                <tbody id="tbody">
+                  <!-- rows por JS -->
+                </tbody>
+              </table>
+            </div>
+
+            <div id="emptyState" class="empty hidden">
+              <span class="material-symbols-outlined">search_off</span>
+              <h3>No hay turnos para mostrar</h3>
+              <p>Probá cambiando el filtro o cargando un nuevo turno.</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- Modal: Nuevo turno -->
+        <div id="modal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Nuevo turno">
+          <div class="modal__backdrop"></div>
+
+          <div class="modal__card">
+            <div class="modal__head">
+              <h3>Nuevo turno</h3>
+              <button id="closeModalBtn" class="iconBtn" title="Cerrar" type="button">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <form id="createForm" class="form">
+              <label class="field">
+                <span>Mascota (ID)</span>
+                <input id="mascotaId" type="number" min="1" placeholder="Ej: 5" required />
+              </label>
+
+              <label class="field">
+                <span>Veterinario (ID)</span>
+                <input id="veterinarioId" type="number" min="1" placeholder="Ej: 1" required />
+                <small class="help">Por ahora es ID numérico.</small>
+              </label>
+
+              <label class="field">
+                <span>Fecha</span>
+                <input id="fecha" type="date" required />
+              </label>
+
+              <label class="field">
+                <span>Hora</span>
+                <input id="hora" type="time" required />
+              </label>
+
+              <label class="field">
+                <span>Descripción</span>
+                <input id="descripcion" type="text" minlength="5" placeholder="Ej: Vacunación anual" required />
+              </label>
+
+              <p id="formError" class="error" role="alert" aria-live="polite"></p>
+
+              <div class="modal__actions">
+                <button class="ghostBtn" type="button" id="cancelBtn">Cancelar</button>
+                <button class="primaryBtn" type="submit">
+                  Guardar
+                  <span class="material-symbols-outlined">check</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+
+        <!-- Modal: Nuevo usuario (solo admin) -->
+        <div id="userModal" class="modal hidden" role="dialog" aria-modal="true" aria-label="Crear usuario">
+          <div class="modal__backdrop"></div>
+
+          <div class="modal__card">
+            <div class="modal__head">
+              <h3>Crear nuevo usuario</h3>
+              <button id="closeUserModalBtn" class="iconBtn" type="button" title="Cerrar">
+                <span class="material-symbols-outlined">close</span>
+              </button>
+            </div>
+
+            <form id="createUserForm" class="form">
+              <label class="field">
+                <span>Nombre</span>
+                <input id="userNameInput" required />
+              </label>
+
+              <label class="field">
+                <span>Email</span>
+                <input id="userEmailInput" type="email" required />
+              </label>
+
+              <label class="field">
+                <span>Contraseña</span>
+                <input id="userPasswordInput" type="password" required />
+              </label>
+
+              <label class="field">
+                <span>Rol</span>
+                <select id="userRoleInput" required>
+                  <option value="1">Administrador</option>
+                  <option value="2">Veterinario</option>
+                  <option value="3">Dueño</option>
+                </select>
+              </label>
+
+              <p id="userFormError" class="error" role="alert" aria-live="polite"></p>
+
+              <div class="modal__actions">
+                <button type="button" class="ghostBtn" id="cancelUserBtn">Cancelar</button>
+                <button type="submit" class="primaryBtn">
+                  Crear
+                  <span class="material-symbols-outlined">check</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script src="./eventos.js"></script>
+  </body>
+</html>

@@ -4,9 +4,9 @@ import type { Evento } from "./eventos.model";
 type EventoRow = {
   id: number;
   user_id: number;
-  mascotaId: number;
-  veterinarioId: number;
-  descripcion: string;
+  mascotaId: number | null;
+  veterinarioId: number | null;
+  descripcion: string | null;
   fecha: Date;
   created_at: Date;
 };
@@ -14,21 +14,31 @@ type EventoRow = {
 export const eventosMysqlModel = {
   findAllByUserId: async (userId: number): Promise<Evento[]> => {
     const [rows] = await pool.query(
-      "SELECT id, user_id, mascota_id, veterinario_id, descripcion, fecha, created_at FROM eventos WHERE user_id = ? ORDER BY created_at DESC",
+      `SELECT 
+         id,
+         user_id,
+         mascota_id AS mascotaId,
+         veterinario_id AS veterinarioId,
+         descripcion,
+         fecha,
+         created_at
+       FROM eventos
+       WHERE user_id = ?
+       ORDER BY created_at DESC`,
       [userId]
     );
 
     const typedRows = rows as EventoRow[];
 
     return typedRows.map((e) => ({
-      id: e.id,
-      userId: e.user_id,
-      mascotaId: e.mascotaId,
-      veterinarioId: e.veterinarioId,
-      descripcion: e.descripcion,
-      fecha: new Date(e.fecha).toISOString(),
-      createdAt: new Date(e.created_at).toISOString(),
-    }));
+  id: e.id,
+  userId: e.user_id,
+  mascotaId: Number(e.mascotaId ?? 0),
+  veterinarioId: Number(e.veterinarioId ?? 0),
+  descripcion: e.descripcion ?? "",
+  fecha: new Date(e.fecha).toISOString(),
+  createdAt: new Date(e.created_at).toISOString(),
+}));
   },
 
   create: async (data: {
@@ -36,7 +46,7 @@ export const eventosMysqlModel = {
     mascotaId: number;
     veterinarioId: number;
     descripcion: string;
-    fecha: string; 
+    fecha: string; // "YYYY-MM-DD HH:mm:ss" o ISO, tu service lo arma
   }): Promise<Evento> => {
     const [result] = await pool.query<any>(
       "INSERT INTO eventos (user_id, mascota_id, veterinario_id, descripcion, fecha) VALUES (?, ?, ?, ?, ?)",
@@ -50,15 +60,15 @@ export const eventosMysqlModel = {
     };
   },
 
-  updateByIdAndUserId: async (data: {
+  async updateByIdAndUserId(data: {
     id: number;
     userId: number;
-    roleId: number,
+    roleId: number;
     mascotaId?: number;
     veterinarioId?: number;
     descripcion?: string;
-    fecha?: string; 
-  }): Promise<boolean> => {
+    fecha?: string; // "YYYY-MM-DD HH:mm:ss"
+  }) {
     const fields: string[] = [];
     const values: any[] = [];
 
@@ -71,53 +81,68 @@ export const eventosMysqlModel = {
       fields.push("veterinario_id = ?");
       values.push(data.veterinarioId);
     }
-    
+
     if (data.descripcion !== undefined) {
       fields.push("descripcion = ?");
       values.push(data.descripcion);
     }
-    
+
     if (data.fecha !== undefined) {
       fields.push("fecha = ?");
       values.push(data.fecha);
     }
 
     if (fields.length === 0) return false;
+    if (data.roleId === 3) return false;
 
-    let query = `UPDATE eventos SET ${fields.join(", ")} WHERE id = ?`;
-  values.push(data.id);
+    let sql = `UPDATE eventos SET ${fields.join(", ")} WHERE id = ?`;
+    values.push(data.id);
 
-  if (data.roleId === 3) {
-    query += " AND user_id = ?";
-    values.push(data.userId);
-  }
+    // Si NO es admin, solo puede editar sus eventos
+    if (data.roleId !== 1) {
+      sql += ` AND user_id = ?`;
+      values.push(data.userId);
+    }
 
-  const [result] = await pool.query<any>(query, values);
-  return result.affectedRows === 1;
-},
+    const [result]: any = await pool.query(sql, values);
+    return result.affectedRows > 0;
+  },
 
-   
   deleteByIdAndUserId: async (id: number, userId: number, roleId: number): Promise<boolean> => {
-    let query = "DELETE FROM eventos WHERE id = ?";
-    let params = [id];
+    // dueños no deberían borrar, pero por las dudas:
+    if (roleId === 3) return false;
 
-  if (roleId === 3) {
+    let query = "DELETE FROM eventos WHERE id = ?";
+    const params: any[] = [id];
+
+    // si NO es admin, solo borra sus eventos
+    if (roleId !== 1) {
       query += " AND user_id = ?";
       params.push(userId);
     }
-  else {
-    query = "DELETE FROM eventos WHERE id = ?";
-    params = [id];
-  }
-    
-   const [result] = await pool.query<any>(query, params);
+
+    const [result] = await pool.query<any>(query, params);
     return result.affectedRows === 1;
   },
 
-  findByIdAndUserId: async (id: number, userId: number): Promise<Evento | null> => {
+  findByIdAndUserId: async (id: number, userId: number, roleId?: number): Promise<Evento | null> => {
+    // Si es admin, puede buscar cualquier evento por id.
+    const isAdmin = roleId === 1;
+
     const [rows] = await pool.query(
-      "SELECT id, user_id, mascota_id, veterinario_id, descripcion, veterinario, fecha, created_at FROM eventos WHERE id = ? AND user_id = ? LIMIT 1",
-      [id, userId]
+      `SELECT
+         id,
+         user_id,
+         mascota_id AS mascotaId,
+         veterinario_id AS veterinarioId,
+         descripcion,
+         fecha,
+         created_at
+       FROM eventos
+       WHERE id = ?
+       ${isAdmin ? "" : "AND user_id = ?"}
+       LIMIT 1`,
+      isAdmin ? [id] : [id, userId]
     );
 
     const typedRows = rows as EventoRow[];
@@ -127,9 +152,9 @@ export const eventosMysqlModel = {
     return {
       id: e.id,
       userId: e.user_id,
-      mascotaId: e.mascotaId,
-      veterinarioId: e.veterinarioId,
-      descripcion: e.descripcion,
+     mascotaId: Number(e.mascotaId ?? 0),
+      veterinarioId: Number(e.veterinarioId ?? 0),
+      descripcion: e.descripcion ?? "",
       fecha: new Date(e.fecha).toISOString(),
       createdAt: new Date(e.created_at).toISOString(),
     };

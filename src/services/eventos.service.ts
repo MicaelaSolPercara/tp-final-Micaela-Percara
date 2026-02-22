@@ -7,10 +7,11 @@ export const getAllEventos = async (userId: string) => {
   return eventosMysqlModel.findAllByUserId(Number(userId));
 };
 
-export const createEvento = async (userId: string, roleId:number, data: CrearEventoDTO) => {
+export const createEvento = async (userId: string, roleId: number, data: CrearEventoDTO) => {
   if (roleId === 3) {
-    throw new Error ("No tienes permisos para crear eventos (turnos)");
+    throw new Error("No tienes permisos para crear eventos (turnos)");
   }
+
   return eventosMysqlModel.create({
     userId: Number(userId),
     mascotaId: data.mascotaId,
@@ -39,17 +40,18 @@ export const actualizarEvento = async (
   if (datos.mascotaId !== undefined) updateData.mascotaId = datos.mascotaId;
   if (datos.veterinarioId !== undefined) updateData.veterinarioId = datos.veterinarioId;
   if (datos.descripcion !== undefined) updateData.descripcion = datos.descripcion;
+
   if (datos.fecha && datos.hora) {
     updateData.fecha = toMysqlDateTime(datos.fecha, datos.hora);
   }
 
   const updated = await eventosMysqlModel.updateByIdAndUserId(updateData);
-
   if (!updated) return null;
 
+  // ✅ 2 args (como define el mysql model)
   return eventosMysqlModel.findByIdAndUserId(Number(id), Number(userId));
 };
 
-export const eliminarEvento = async (id: string, userId: string, roleId:number) => {
+export const eliminarEvento = async (id: string, userId: string, roleId: number) => {
   return eventosMysqlModel.deleteByIdAndUserId(Number(id), Number(userId), roleId);
 };
