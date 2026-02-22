@@ -434,6 +434,9 @@ body {
   border-radius: 14px;
   background: rgba(42,157,144,0.06);
 }
+.userCard > div:nth-child(2) {
+  min-width: 0;
+}
 
 .userCard__avatar {
   width: 40px;
@@ -452,6 +455,7 @@ body {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  min-width: 0;
 }
 .userCard__role {
   margin: 4px 0 0;
